@@ -1,153 +1,160 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/section_header.dart';
-import '../widgets/project_card.dart';
 import '../widgets/skill_chip.dart';
+import '../widgets/project_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      body: CustomScrollView(
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(const Duration(milliseconds: 800));
+      },
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
-          // Hero Section
+          // Hero Section with animation
           SliverToBoxAdapter(
             child: _HeroSection(colorScheme: colorScheme),
           ),
 
-          // About Section
+          // About snippet
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SectionHeader(title: 'About Me'),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Tech Generalist & Solopreneur who enjoys solving problems and building things end-to-end. Creating practical and scalable solutions from Bangkok, Thailand.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+            child: _AnimatedSection(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionHeader(title: 'About'),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Tech Generalist & Solopreneur building full-stack products, integrating AI systems, and growing digital presence — from idea to deployment.',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _InfoChip(icon: Icons.location_on, label: 'Bangkok, Thailand'),
+                        _InfoChip(icon: Icons.work, label: '3+ Years'),
+                        _InfoChip(icon: Icons.code, label: 'Full-Stack'),
+                        _InfoChip(icon: Icons.auto_awesome, label: 'AI'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Featured Skills
+          SliverToBoxAdapter(
+            child: _AnimatedSection(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionHeader(title: 'Tech Stack'),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: const [
+                        SkillChip(label: 'Flutter'),
+                        SkillChip(label: 'Dart'),
+                        SkillChip(label: 'Next.js'),
+                        SkillChip(label: 'React'),
+                        SkillChip(label: 'TypeScript'),
+                        SkillChip(label: 'Python'),
+                        SkillChip(label: 'FastAPI'),
+                        SkillChip(label: 'PostgreSQL'),
+                        SkillChip(label: 'Docker'),
+                        SkillChip(label: 'AWS'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Featured Projects (top 3)
+          SliverToBoxAdapter(
+            child: _AnimatedSection(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SectionHeader(title: 'Featured Projects'),
+                        TextButton(
+                          onPressed: () {
+                            // Navigate to projects tab handled by parent
+                          },
+                          child: const Text('View All'),
                         ),
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _InfoChip(icon: Icons.location_on, label: 'Bangkok, Thailand'),
-                      _InfoChip(icon: Icons.work, label: '3+ Years Experience'),
-                      _InfoChip(icon: Icons.code, label: 'Full-Stack Dev'),
-                      _InfoChip(icon: Icons.auto_awesome, label: 'AI Integration'),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ..._featuredProjects.map((p) => ProjectCard(
+                          name: p['name'] as String,
+                          description: p['description'] as String,
+                          tags: (p['tags'] as List).cast<String>(),
+                          url: p['url'] as String,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
 
-          // Skills Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SectionHeader(title: 'Tech Stack'),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      const SkillChip(label: 'Flutter'),
-                      const SkillChip(label: 'Dart'),
-                      const SkillChip(label: 'Next.js'),
-                      const SkillChip(label: 'React'),
-                      const SkillChip(label: 'TypeScript'),
-                      const SkillChip(label: 'Python'),
-                      const SkillChip(label: 'FastAPI'),
-                      const SkillChip(label: 'PostgreSQL'),
-                      const SkillChip(label: 'Docker'),
-                      const SkillChip(label: 'AWS'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Projects Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SectionHeader(title: 'Featured Projects'),
-                  const SizedBox(height: 16),
-                  ..._buildProjectCards(context),
-                ],
-              ),
-            ),
-          ),
-
-          // Contact Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 40, 24, 60),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SectionHeader(title: 'Get In Touch'),
-                  const SizedBox(height: 16),
-                  _ContactCard(
-                    colorScheme: colorScheme,
-                  ),
-                ],
-              ),
-            ),
+          // Bottom spacing
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 24),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _buildProjectCards(BuildContext context) {
-    final projects = [
-      {
-        'name': 'Portfolio Web',
-        'description': '100+ micro-frontends deployed on Vercel',
-        'tags': ['Next.js', 'TypeScript'],
-        'url': 'https://bookchaowalit.com',
-      },
-      {
-        'name': 'Base64 Encoder',
-        'description': 'Encode and decode Base64 strings in real time',
-        'tags': ['Next.js'],
-        'url': 'https://base64.bookchaowalit.com',
-      },
-      {
-        'name': 'Regex Tester',
-        'description': 'Real-time regex testing with visual feedback',
-        'tags': ['Next.js', 'React'],
-        'url': 'https://regex.bookchaowalit.com',
-      },
-    ];
-
-    return projects.map((p) {
-      final tags = (p['tags']! as List).cast<String>();
-      return ProjectCard(
-        name: p['name']! as String,
-        description: p['description']! as String,
-        tags: tags,
-        url: p['url']! as String,
-      );
-    }).toList();
-  }
+  static const _featuredProjects = [
+    {
+      'name': 'Portfolio Web',
+      'description': '100+ micro-frontends deployed on Vercel',
+      'tags': ['Next.js', 'TypeScript'],
+      'url': 'https://bookchaowalit.com',
+    },
+    {
+      'name': 'Base64 Encoder',
+      'description': 'Encode and decode Base64 strings in real time',
+      'tags': ['Next.js'],
+      'url': 'https://base64.bookchaowalit.com',
+    },
+    {
+      'name': 'Regex Tester',
+      'description': 'Real-time regex testing with visual feedback',
+      'tags': ['Next.js', 'React'],
+      'url': 'https://regex.bookchaowalit.com',
+    },
+  ];
 }
 
 class _HeroSection extends StatelessWidget {
@@ -176,7 +183,7 @@ class _HeroSection extends StatelessWidget {
             radius: 48,
             backgroundColor: colorScheme.primary,
             child: Text(
-              'B',
+              'C',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -204,9 +211,32 @@ class _HeroSection extends StatelessWidget {
                   color: colorScheme.onSurfaceVariant,
                 ),
           ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              FilledButton.icon(
+                onPressed: () => _launchUrl('mailto:bookchaowalit@gmail.com'),
+                icon: const Icon(Icons.email, size: 18),
+                label: const Text('Hire Me'),
+              ),
+              const SizedBox(width: 12),
+              OutlinedButton.icon(
+                onPressed: () => _launchUrl('https://bookchaowalit.com'),
+                icon: const Icon(Icons.language, size: 18),
+                label: const Text('Website'),
+              ),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }
 
@@ -242,65 +272,27 @@ class _InfoChip extends StatelessWidget {
   }
 }
 
-class _ContactCard extends StatelessWidget {
-  const _ContactCard({required this.colorScheme});
-  final ColorScheme colorScheme;
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
+/// Fade + slide in animation for sections
+class _AnimatedSection extends StatelessWidget {
+  const _AnimatedSection({required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Let\'s work together!',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 20 * (1 - value)),
+            child: child,
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Available for freelance projects and full-time opportunities.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              FilledButton.icon(
-                onPressed: () => _launchUrl('mailto:bookchaowalit@gmail.com'),
-                icon: const Icon(Icons.email, size: 18),
-                label: const Text('Email'),
-              ),
-              OutlinedButton.icon(
-                onPressed: () => _launchUrl('https://bookchaowalit.com'),
-                icon: const Icon(Icons.language, size: 18),
-                label: const Text('Portfolio'),
-              ),
-              OutlinedButton.icon(
-                onPressed: () => _launchUrl('https://github.com/bookchaowalit'),
-                icon: const Icon(Icons.code, size: 18),
-                label: const Text('GitHub'),
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
+      child: child,
     );
   }
 }

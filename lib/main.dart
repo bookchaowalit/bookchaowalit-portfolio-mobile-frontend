@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const BookChaowalitPortfolioApp());
@@ -31,7 +31,7 @@ class BookChaowalitPortfolioApp extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: ThemeMode.system,
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
