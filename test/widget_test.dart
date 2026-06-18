@@ -5,9 +5,9 @@ import 'package:bookchaowalit_portfolio_mobile/screens/home_screen.dart';
 void main() {
   testWidgets('Home screen displays hero content', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
-          body: HomeScreen(),
+          body: HomeScreen(onProjectTap: (_) {}),
         ),
       ),
     );

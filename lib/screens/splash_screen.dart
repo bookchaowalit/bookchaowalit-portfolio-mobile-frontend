@@ -2,7 +2,22 @@ import 'package:flutter/material.dart';
 import 'main_shell.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final ValueChanged<ThemeMode> onThemeChanged;
+  final ValueChanged<String> onLanguageChanged;
+  final ThemeMode currentThemeMode;
+  final String currentLanguage;
+  final int? Function() getPendingDeepLink;
+  final VoidCallback clearPendingDeepLink;
+
+  const SplashScreen({
+    super.key,
+    required this.onThemeChanged,
+    required this.onLanguageChanged,
+    required this.currentThemeMode,
+    required this.currentLanguage,
+    required this.getPendingDeepLink,
+    required this.clearPendingDeepLink,
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -31,11 +46,19 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (mounted) {
+        final deepLinkIndex = widget.getPendingDeepLink();
+        widget.clearPendingDeepLink();
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 600),
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const MainShell(),
+                MainShell(
+                  onThemeChanged: widget.onThemeChanged,
+                  onLanguageChanged: widget.onLanguageChanged,
+                  currentThemeMode: widget.currentThemeMode,
+                  currentLanguage: widget.currentLanguage,
+                  initialDeepLinkProjectIndex: deepLinkIndex,
+                ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },

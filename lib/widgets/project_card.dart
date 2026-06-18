@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProjectCard extends StatelessWidget {
   final String name;
   final String description;
   final List<String> tags;
   final String url;
+  final VoidCallback? onTap;
 
   const ProjectCard({
     super.key,
@@ -13,14 +13,8 @@ class ProjectCard extends StatelessWidget {
     required this.description,
     required this.tags,
     required this.url,
+    this.onTap,
   });
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +22,7 @@ class ProjectCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () => _launchUrl(url),
+        onTap: onTap ?? () {},
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -50,7 +44,7 @@ class ProjectCard extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    Icons.arrow_outward,
+                    onTap != null ? Icons.arrow_forward_ios : Icons.arrow_outward,
                     size: 18,
                     color: colorScheme.onSurfaceVariant,
                   ),

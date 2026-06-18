@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../data/project_data.dart';
 import '../widgets/section_header.dart';
 import '../widgets/skill_chip.dart';
 import '../widgets/project_card.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final ValueChanged<int> onProjectTap;
+
+  const HomeScreen({super.key, required this.onProjectTap});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -114,12 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    ..._featuredProjects.map((p) => ProjectCard(
-                          name: p['name'] as String,
-                          description: p['description'] as String,
-                          tags: (p['tags'] as List).cast<String>(),
-                          url: p['url'] as String,
-                        )),
+                    ...List.generate(3, (i) {
+                      final p = ProjectData.allProjects[i];
+                      return ProjectCard(
+                        name: p.name,
+                        description: p.description,
+                        tags: p.tags,
+                        url: p.url,
+                        onTap: () => widget.onProjectTap(i),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -134,27 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  static const _featuredProjects = [
-    {
-      'name': 'Portfolio Web',
-      'description': '100+ micro-frontends deployed on Vercel',
-      'tags': ['Next.js', 'TypeScript'],
-      'url': 'https://bookchaowalit.com',
-    },
-    {
-      'name': 'Base64 Encoder',
-      'description': 'Encode and decode Base64 strings in real time',
-      'tags': ['Next.js'],
-      'url': 'https://base64.bookchaowalit.com',
-    },
-    {
-      'name': 'Regex Tester',
-      'description': 'Real-time regex testing with visual feedback',
-      'tags': ['Next.js', 'React'],
-      'url': 'https://regex.bookchaowalit.com',
-    },
-  ];
 }
 
 class _HeroSection extends StatelessWidget {
