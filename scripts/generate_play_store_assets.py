@@ -4,7 +4,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-OUTPUT_DIR = "/home/bookchaowalit/book-everything/solo-empire/domains/book-dev/book-apps/portfolio/bookchaowalit-portfolio-mobile/play-store-assets"
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "play-store-assets")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Colors - B&W monochrome design system
@@ -197,13 +197,16 @@ def generate_phone_screenshot(variant=1):
     img.save(os.path.join(OUTPUT_DIR, f"phone-screenshot-{variant}-1080x1920.png"))
     print(f"✓ Phone screenshot {variant} generated: phone-screenshot-{variant}-1080x1920.png")
 
-def generate_tablet_screenshot(size_name, width, height):
-    """Generate tablet screenshot mockup."""
+def generate_tablet_screenshot(size_name, width, height, variant=1):
+    """Generate tablet screenshot mockup with different content variants."""
     img = Image.new('RGB', (width, height), WHITE)
     draw = ImageDraw.Draw(img)
     
     # Status bar
     draw.rectangle([0, 0, width, 60], fill=GRAY_BG)
+    font_small = get_font(24)
+    draw.text((40, 18), "9:41", fill=BLACK, font=font_small)
+    draw.text((width - 100, 18), "100%", fill=BLACK, font=font_small)
     
     # App bar
     draw.rectangle([0, 60, width, 150], fill=WHITE)
@@ -211,34 +214,99 @@ def generate_tablet_screenshot(size_name, width, height):
     draw.text((40, 85), "Portfolio", fill=BLACK, font=font_app)
     draw.line([(0, 150), (width, 150)], fill=GRAY_LIGHT, width=2)
     
-    # Hero section
-    draw.rectangle([0, 150, width, 400], fill=GRAY_BG)
-    font_name = get_font(52, bold=True)
-    draw.text((50, 200), "Chaowalit Greepoke", fill=BLACK, font=font_name)
-    font_role = get_font(28)
-    draw.text((50, 280), "Full-Stack Developer & Solopreneur", fill=GRAY_MID, font=font_role)
-    draw.rectangle([50, 340, 180, 348], fill=BLACK)
+    if variant == 1:
+        # Home screen - Hero + Skills
+        draw.rectangle([0, 150, width, 400], fill=GRAY_BG)
+        font_name = get_font(52, bold=True)
+        draw.text((50, 200), "Chaowalit Greepoke", fill=BLACK, font=font_name)
+        font_role = get_font(28)
+        draw.text((50, 280), "Full-Stack Developer & Solopreneur", fill=GRAY_MID, font=font_role)
+        draw.rectangle([50, 340, 180, 348], fill=BLACK)
+        
+        # Skills section
+        font_section = get_font(32, bold=True)
+        draw.rectangle([50, 430, 56, 470], fill=BLACK)
+        draw.text((75, 430), "Skills", fill=BLACK, font=font_section)
+        
+        skills = ["Flutter", "Dart", "Next.js", "React", "TypeScript", "Python"]
+        font_chip = get_font(22)
+        x, y = 50, 500
+        for skill in skills:
+            bbox = draw.textbbox((0, 0), skill, font=font_chip)
+            w = bbox[2] - bbox[0] + 30
+            if x + w > width - 50:
+                x = 50
+                y += 55
+            draw.rounded_rectangle([x, y, x + w, y + 40], radius=20, outline=GRAY_MID, width=2)
+            draw.text((x + 15, y + 8), skill, fill=BLACK, font=font_chip)
+            x += w + 10
     
-    # Content grid (2 columns)
-    font_section = get_font(32, bold=True)
-    draw.rectangle([50, 430, 56, 470], fill=BLACK)
-    draw.text((75, 430), "Skills", fill=BLACK, font=font_section)
+    elif variant == 2:
+        # Projects screen
+        draw.rectangle([50, 180, 56, 220], fill=BLACK)
+        font_section = get_font(36, bold=True)
+        draw.text((75, 180), "Projects", fill=BLACK, font=font_section)
+        
+        projects = [
+            ("Portfolio Mobile App", "Flutter • Dart", "Cross-platform mobile portfolio"),
+            ("Web Platform", "Next.js • React", "Full-stack web application"),
+            ("Automation System", "Python • Workers", "CI/CD automation pipeline"),
+            ("E-Commerce Backend", "Node.js • Express", "RESTful API service"),
+        ]
+        font_proj = get_font(28, bold=True)
+        font_tech = get_font(20)
+        font_desc = get_font(18)
+        y = 260
+        col_w = (width - 120) // 2
+        for i, (name, tech, desc) in enumerate(projects):
+            col = i % 2
+            row = i // 2
+            cx = 50 + col * (col_w + 20)
+            ry = 260 + row * 320
+            draw.rounded_rectangle([cx, ry, cx + col_w, ry + 280], radius=16, outline=GRAY_LIGHT, width=2)
+            draw.rectangle([cx, ry, cx + col_w, ry + 80], fill=GRAY_BG)
+            draw.text((cx + 20, ry + 25), name, fill=BLACK, font=font_proj)
+            draw.text((cx + 20, ry + 100), tech, fill=GRAY_MID, font=font_tech)
+            draw.text((cx + 20, ry + 140), desc, fill=GRAY_MID, font=font_desc)
     
-    skills = ["Flutter", "Dart", "Next.js", "React", "TypeScript", "Python"]
-    font_chip = get_font(22)
-    x, y = 50, 500
-    for skill in skills:
-        bbox = draw.textbbox((0, 0), skill, font=font_chip)
-        w = bbox[2] - bbox[0] + 30
-        if x + w > width - 50:
-            x = 50
-            y += 55
-        draw.rounded_rectangle([x, y, x + w, y + 40], radius=20, outline=GRAY_MID, width=2)
-        draw.text((x + 15, y + 8), skill, fill=BLACK, font=font_chip)
-        x += w + 10
+    elif variant == 3:
+        # Settings screen
+        draw.rectangle([50, 180, 56, 220], fill=BLACK)
+        font_section = get_font(36, bold=True)
+        draw.text((75, 180), "Settings", fill=BLACK, font=font_section)
+        
+        settings_items = [
+            ("Theme", "System Default"),
+            ("Language", "English"),
+            ("Notifications", "Enabled"),
+            ("About", "Version 1.0.0"),
+        ]
+        font_label = get_font(26, bold=True)
+        font_value = get_font(22)
+        y = 270
+        for label, value in settings_items:
+            draw.rounded_rectangle([50, y, width - 50, y + 100], radius=12, outline=GRAY_LIGHT, width=2)
+            draw.text((80, y + 15), label, fill=BLACK, font=font_label)
+            draw.text((80, y + 55), value, fill=GRAY_MID, font=font_value)
+            # Toggle or chevron
+            draw.text((width - 100, y + 30), ">", fill=GRAY_MID, font=font_value)
+            y += 130
     
-    img.save(os.path.join(OUTPUT_DIR, f"tablet-{size_name}-{width}x{height}.png"))
-    print(f"✓ Tablet screenshot generated: tablet-{size_name}-{width}x{height}.png")
+    # Bottom nav bar
+    draw.rectangle([0, height - 80, width, height], fill=GRAY_BG)
+    draw.line([(0, height - 80), (width, height - 80)], fill=GRAY_LIGHT, width=2)
+    font_nav = get_font(20)
+    nav_items = ["Home", "Projects", "About", "Contact", "Settings"]
+    nav_width = width // len(nav_items)
+    for i, item in enumerate(nav_items):
+        bbox = draw.textbbox((0, 0), item, font=font_nav)
+        tw = bbox[2] - bbox[0]
+        x = nav_width * i + (nav_width - tw) // 2
+        draw.text((x, height - 55), item, fill=GRAY_MID if i != 0 else BLACK, font=font_nav)
+    
+    suffix = "" if variant == 1 else f"-{variant}"
+    img.save(os.path.join(OUTPUT_DIR, f"tablet-{size_name}{suffix}-{width}x{height}.png"))
+    print(f"✓ Tablet screenshot generated: tablet-{size_name}{suffix}-{width}x{height}.png")
 
 if __name__ == "__main__":
     print("Generating Google Play Store assets...\n")
@@ -250,9 +318,10 @@ if __name__ == "__main__":
     for i in range(1, 5):
         generate_phone_screenshot(i)
     
-    # Tablet screenshots
-    generate_tablet_screenshot("7inch", 1200, 1920)  # 7-inch tablet
-    generate_tablet_screenshot("10inch", 1600, 2560)  # 10-inch tablet
+    # Tablet screenshots (3 variants each, need at least 2)
+    for v in range(1, 4):
+        generate_tablet_screenshot("7inch", 1200, 1920, variant=v)
+        generate_tablet_screenshot("10inch", 1600, 2560, variant=v)
     
     print(f"\n✓ All assets saved to: {OUTPUT_DIR}")
     print("\nUpload these to Google Play Console:")
