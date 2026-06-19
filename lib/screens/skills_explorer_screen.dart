@@ -53,6 +53,32 @@ class _SkillsExplorerScreenState extends State<SkillsExplorerScreen>
     _SkillEntry(name: 'Vercel', category: 'DevOps', proficiency: 0.85, icon: Icons.rocket_launch, detail: 'Edge functions, preview deployments, analytics'),
     _SkillEntry(name: 'CI/CD', category: 'DevOps', proficiency: 0.80, icon: Icons.sync_alt, detail: 'GitHub Actions, automated testing, deployment pipelines'),
     _SkillEntry(name: 'Git', category: 'DevOps', proficiency: 0.85, icon: Icons.account_tree, detail: 'Branching strategies, rebasing, hooks, monorepos'),
+    // AI & Data
+    _SkillEntry(name: 'Machine Learning', category: 'AI & Data', proficiency: 0.65, icon: Icons.psychology, detail: 'Scikit-learn, model training, feature engineering, evaluation metrics'),
+    _SkillEntry(name: 'TensorFlow', category: 'AI & Data', proficiency: 0.60, icon: Icons.memory, detail: 'Neural networks, TFLite for mobile, transfer learning, model optimization'),
+    _SkillEntry(name: 'Data Analysis', category: 'AI & Data', proficiency: 0.75, icon: Icons.analytics, detail: 'Pandas, NumPy, data visualization, statistical analysis, ETL pipelines'),
+    _SkillEntry(name: 'NLP', category: 'AI & Data', proficiency: 0.60, icon: Icons.chat, detail: 'Text processing, sentiment analysis, transformers, LLM integration'),
+    // Blockchain
+    _SkillEntry(name: 'Solidity', category: 'Blockchain', proficiency: 0.55, icon: Icons.link, detail: 'Smart contracts, ERC-20/721 tokens, DeFi protocols, gas optimization'),
+    _SkillEntry(name: 'Web3.js', category: 'Blockchain', proficiency: 0.55, icon: Icons.currency_exchange, detail: 'Ethereum integration, wallet connections, contract interaction, dApp frontends'),
+    _SkillEntry(name: 'Smart Contracts', category: 'Blockchain', proficiency: 0.50, icon: Icons.gavel, detail: 'Contract auditing, upgradeable patterns, Hardhat testing, deployment'),
+    // IoT
+    _SkillEntry(name: 'Embedded Systems', category: 'IoT', proficiency: 0.60, icon: Icons.memory, detail: 'Microcontrollers, GPIO, sensor integration, real-time processing'),
+    _SkillEntry(name: 'MQTT', category: 'IoT', proficiency: 0.65, icon: Icons.wifi, detail: 'Pub/sub messaging, broker setup, QoS levels, IoT communication protocols'),
+    _SkillEntry(name: 'Raspberry Pi', category: 'IoT', proficiency: 0.70, icon: Icons.developer_board, detail: 'Linux configuration, Python scripts, hardware interfacing, edge computing'),
+    _SkillEntry(name: 'Arduino', category: 'IoT', proficiency: 0.65, icon: Icons.settings_input_component, detail: 'C/C++ programming, sensor libraries, motor control, prototyping'),
+    // Game Dev
+    _SkillEntry(name: 'Unity', category: 'Game Dev', proficiency: 0.60, icon: Icons.sports_esports, detail: 'C# scripting, physics engine, UI systems, asset management, builds'),
+    _SkillEntry(name: 'Game Mechanics', category: 'Game Dev', proficiency: 0.65, icon: Icons.videogame_asset, detail: 'Player controllers, inventory systems, AI behavior, level design'),
+    _SkillEntry(name: '2D/3D Graphics', category: 'Game Dev', proficiency: 0.55, icon: Icons.view_in_ar, detail: 'Sprite animation, shaders, lighting, particle systems, optimization'),
+    // Deep Tech
+    _SkillEntry(name: 'Computer Vision', category: 'Deep Tech', proficiency: 0.60, icon: Icons.visibility, detail: 'OpenCV, image processing, object detection, real-time video analysis'),
+    _SkillEntry(name: 'Robotics', category: 'Deep Tech', proficiency: 0.50, icon: Icons.smart_toy, detail: 'ROS basics, sensor fusion, path planning, autonomous navigation'),
+    _SkillEntry(name: 'Edge AI', category: 'Deep Tech', proficiency: 0.55, icon: Icons.speed, detail: 'Model quantization, TFLite Mobile, ONNX runtime, hardware acceleration'),
+    // XR & VR
+    _SkillEntry(name: 'AR Development', category: 'XR & VR', proficiency: 0.55, icon: Icons.view_in_ar, detail: 'ARKit, ARCore, marker tracking, spatial anchors, 3D overlays'),
+    _SkillEntry(name: 'VR Development', category: 'XR & VR', proficiency: 0.50, icon: Icons.vrpano, detail: 'Unity XR, Oculus SDK, hand tracking, immersive environments'),
+    _SkillEntry(name: '3D Modeling', category: 'XR & VR', proficiency: 0.45, icon: Icons.interests, detail: 'Blender basics, mesh optimization, texture mapping, export pipelines'),
   ];
 
   static List<String> get _categories {
