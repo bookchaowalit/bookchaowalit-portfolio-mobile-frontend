@@ -6,6 +6,8 @@ class ProjectCard extends StatelessWidget {
   final List<String> tags;
   final String url;
   final VoidCallback? onTap;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteToggle;
 
   const ProjectCard({
     super.key,
@@ -14,6 +16,8 @@ class ProjectCard extends StatelessWidget {
     required this.tags,
     required this.url,
     this.onTap,
+    this.isFavorite = false,
+    this.onFavoriteToggle,
   });
 
   @override
@@ -43,6 +47,11 @@ class ProjectCard extends StatelessWidget {
                           ),
                     ),
                   ),
+                  if (onFavoriteToggle != null)
+                    _FavoriteButton(
+                      isFavorite: isFavorite,
+                      onTap: onFavoriteToggle!,
+                    ),
                   Icon(
                     onTap != null ? Icons.arrow_forward_ios : Icons.arrow_outward,
                     size: 18,
@@ -82,6 +91,36 @@ class ProjectCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FavoriteButton extends StatelessWidget {
+  final bool isFavorite;
+  final VoidCallback onTap;
+
+  const _FavoriteButton({required this.isFavorite, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return IconButton(
+      onPressed: onTap,
+      icon: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        child: Icon(
+          isFavorite ? Icons.favorite : Icons.favorite_border,
+          key: ValueKey(isFavorite),
+          color: isFavorite ? Colors.red : colorScheme.onSurfaceVariant,
+          size: 22,
+        ),
+        transitionBuilder: (child, animation) {
+          return ScaleTransition(scale: animation, child: child);
+        },
+      ),
+      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+      padding: const EdgeInsets.all(4),
+      tooltip: isFavorite ? 'Remove from favorites' : 'Add to favorites',
     );
   }
 }

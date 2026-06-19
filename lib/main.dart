@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_links/app_links.dart';
+import 'services/favorites_service.dart';
 import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load saved preferences
+  // Load saved preferences and initialize services
   final prefs = await SharedPreferences.getInstance();
+  await FavoritesService.instance.init();
   final themeIndex = prefs.getInt('theme_mode') ?? 0;
   final language = prefs.getString('language') ?? 'en';
 

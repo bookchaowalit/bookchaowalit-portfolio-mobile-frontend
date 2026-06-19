@@ -69,7 +69,10 @@ class _MainShellState extends State<MainShell> {
     final project = ProjectData.allProjects[projectIndex];
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ProjectDetailScreen(project: project),
+        builder: (_) => ProjectDetailScreen(
+          project: project,
+          projectIndex: projectIndex,
+        ),
       ),
     );
   }

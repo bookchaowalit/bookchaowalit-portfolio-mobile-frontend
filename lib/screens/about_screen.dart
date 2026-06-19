@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/section_header.dart';
 import '../widgets/skill_chip.dart';
+import 'skills_explorer_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -109,6 +110,30 @@ class AboutScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SectionHeader(title: 'Skills'),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Tap any skill to see proficiency levels and details.',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const SkillsExplorerScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.explore, size: 18),
+                        label: const Text('Explore'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,

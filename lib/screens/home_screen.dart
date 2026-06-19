@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/project_data.dart';
+import '../services/favorites_service.dart';
 import '../widgets/section_header.dart';
 import '../widgets/skill_chip.dart';
 import '../widgets/project_card.dart';
@@ -15,6 +16,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final FavoritesService _favoritesService = FavoritesService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesService.onChanged = () {
+      if (mounted) setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    _favoritesService.onChanged = null;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -124,6 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         description: p.description,
                         tags: p.tags,
                         url: p.url,
+                        isFavorite: _favoritesService.isFavorite(i),
+                        onFavoriteToggle: () => _favoritesService.toggleFavorite(i),
                         onTap: () => widget.onProjectTap(i),
                       );
                     }),

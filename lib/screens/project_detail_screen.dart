@@ -1,17 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/project_data.dart';
+import '../services/favorites_service.dart';
 
-class ProjectDetailScreen extends StatelessWidget {
+class ProjectDetailScreen extends StatefulWidget {
   final ProjectEntry project;
+  final int? projectIndex;
 
-  const ProjectDetailScreen({super.key, required this.project});
+  const ProjectDetailScreen({
+    super.key,
+    required this.project,
+    this.projectIndex,
+  });
+
+  @override
+  State<ProjectDetailScreen> createState() => _ProjectDetailScreenState();
+}
+
+class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
+  final FavoritesService _favoritesService = FavoritesService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesService.onChanged = () {
+      if (mounted) setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    _favoritesService.onChanged = null;
+    super.dispose();
+  }
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  bool get _isFavorite {
+    final index = widget.projectIndex;
+    if (index == null) return false;
+    return _favoritesService.isFavorite(index);
+  }
+
+  void _toggleFavorite() {
+    final index = widget.projectIndex;
+    if (index == null) return;
+    _favoritesService.toggleFavorite(index);
   }
 
   @override
@@ -54,8 +93,28 @@ class ProjectDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
+                      // Favorite button
+                      if (widget.projectIndex != null)
+                        IconButton(
+                          onPressed: _toggleFavorite,
+                          icon: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            child: Icon(
+                              _isFavorite ? Icons.favorite : Icons.favorite_border,
+                              key: ValueKey(_isFavorite),
+                              color: _isFavorite ? Colors.red : null,
+                            ),
+                            transitionBuilder: (child, animation) {
+                              return ScaleTransition(scale: animation, child: child);
+                            },
+                          ),
+                          tooltip: _isFavorite ? 'Remove from favorites' : 'Add to favorites',
+                          style: IconButton.styleFrom(
+                            backgroundColor: colorScheme.surface.withValues(alpha: 0.8),
+                          ),
+                        ),
                       IconButton(
-                        onPressed: () => _launchUrl(project.url),
+                        onPressed: () => _launchUrl(widget.project.url),
                         icon: const Icon(Icons.open_in_new),
                         tooltip: 'Open in browser',
                         style: IconButton.styleFrom(
@@ -74,7 +133,7 @@ class ProjectDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: Icon(
-                      project.icon,
+                      widget.project.icon,
                       size: 36,
                       color: colorScheme.onPrimary,
                     ),
@@ -82,7 +141,7 @@ class ProjectDetailScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   // Title
                   Text(
-                    project.name,
+                    widget.project.name,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -92,7 +151,7 @@ class ProjectDetailScreen extends StatelessWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: project.tags.map((tag) {
+                    children: widget.project.tags.map((tag) {
                       return Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
@@ -120,7 +179,7 @@ class ProjectDetailScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               child: Text(
-                project.longDescription,
+                widget.project.longDescription,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       height: 1.6,
@@ -143,7 +202,7 @@ class ProjectDetailScreen extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: 16),
-                  ...project.features.map((feature) => Padding(
+                  ...widget.project.features.map((feature) => Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +260,7 @@ class ProjectDetailScreen extends StatelessWidget {
                       separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (context, index) {
                         return _ScreenshotPlaceholder(
-                          project: project,
+                          project: widget.project,
                           index: index,
                           colorScheme: colorScheme,
                         );
@@ -218,7 +277,7 @@ class ProjectDetailScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
               child: FilledButton.icon(
-                onPressed: () => _launchUrl(project.url),
+                onPressed: () => _launchUrl(widget.project.url),
                 icon: const Icon(Icons.open_in_new),
                 label: const Text('Open in Browser'),
                 style: FilledButton.styleFrom(
